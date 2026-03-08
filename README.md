@@ -13,7 +13,7 @@ O projeto WeedShop oferece as seguintes funcionalidades:
 - Exportar para uma planilha excel.
 
 ## 1º Fase do Projeto - BackEnd
-Exemplos para se usar em ferramentas de teste de API (API Testing Tools) como Thunder Client, Postman.  
+Exemplos para se usar em ferramentas de teste de API (API Testing Tools) como Thunder Client, Postman, e etc.  
 1. Registrar Usuario
 - Metodo: POST
 - URL: https://projetoweedshop.onrender.com/register
