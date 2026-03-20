@@ -1,5 +1,5 @@
 const validarProduto = (req, res, next) => {
-  const { nome, quantidade, data, preco } = req.body;
+  const { nome, quantidade, preco } = req.body;
 
   if (!nome || nome.trim() === '')
     return res.status(400).json({ message: 'O nome do produto e obrigatorio' });

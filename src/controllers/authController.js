@@ -89,7 +89,7 @@ const listaUsuarios = async (req, res) => {
   try {
     const { data, error } = await supabaseAdmin.auth.admin.listUsers();
 
-    if (error) return res.status(400).json({ message: error.message });
+  if (error) return res.status(400).json({ message: 'Erro ao buscar usuarios' });
 
     const users = data.users.map(u => ({
       id: u.id,
