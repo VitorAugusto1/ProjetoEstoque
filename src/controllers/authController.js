@@ -31,6 +31,11 @@ const register = async (req, res) => {
       return res.status(400).json({ message });
     }
 
+    await supabaseAdmin
+      .from('profiles')
+      .update({ nome_loja })
+      .eq('id', data.user.id);
+
     return res.json({
       message: 'Usuario registrado com sucesso',
       data: { id: data.user?.id, email: data.user?.email }
