@@ -1,3 +1,5 @@
+const { supabase } = require('../config/supabase');
+
 const criarProduto = async (req, res) => {
   try {
     const { nome, quantidade, preco } = req.body;

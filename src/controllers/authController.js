@@ -4,7 +4,7 @@ const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const register = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { email, password, nome_loja } = req.body;
     const emailNormalizado = email?.toLowerCase().trim();
 
     if (!emailNormalizado || emailNormalizado === '')
