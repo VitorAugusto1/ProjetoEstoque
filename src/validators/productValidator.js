@@ -1,32 +1,42 @@
 const validarProduto = (req, res, next) => {
-  const { nome, quantidade, preco } = req.body;
+  let { nome, quantidade, preco } = req.body;
 
-  if (!nome || nome.trim() === '')
-    return res.status(400).json({ message: 'O nome do produto e obrigatorio' });
+  if (typeof nome === 'string') nome = nome.trim();
 
-  if (nome.trim().length < 2)
+  const quantidadeNum = Number(quantidade);
+  const precoNum = Number(preco);
+
+  if (!nome)
+    return res.status(400).json({ message: 'O nome do produto é obrigatório' });
+
+  if (nome.length < 2)
     return res.status(400).json({ message: 'O nome deve ter pelo menos 2 caracteres' });
 
-  if (nome.trim().length > 100)
-    return res.status(400).json({ message: 'O nome deve ter no maximo 100 caracteres' });
+  if (nome.length > 100)
+    return res.status(400).json({ message: 'O nome deve ter no máximo 100 caracteres' });
 
   if (quantidade === undefined || quantidade === null)
-    return res.status(400).json({ message: 'A quantidade e obrigatoria' });
+    return res.status(400).json({ message: 'A quantidade é obrigatória' });
 
-  if (typeof quantidade !== 'number' || quantidade < 0)
-    return res.status(400).json({ message: 'A quantidade deve ser um numero positivo' });
+  if (Number.isNaN(quantidadeNum) || quantidadeNum < 0)
+    return res.status(400).json({ message: 'A quantidade deve ser um número positivo' });
 
-  if (!Number.isInteger(quantidade))
-    return res.status(400).json({ message: 'A quantidade deve ser um numero inteiro' });
+  if (!Number.isInteger(quantidadeNum))
+    return res.status(400).json({ message: 'A quantidade deve ser um número inteiro' });
+
 
   if (preco === undefined || preco === null)
-    return res.status(400).json({ message: 'O preco do produto e obrigatorio' });
+    return res.status(400).json({ message: 'O preço é obrigatório' });
 
-  if (typeof preco !== 'number' || preco < 0)
-    return res.status(400).json({ message: 'O preco deve ser um numero positivo' });
+  if (Number.isNaN(precoNum) || precoNum < 0)
+    return res.status(400).json({ message: 'O preço deve ser um número positivo' });
 
-  if (preco > 999999.99)
-    return res.status(400).json({ message: 'O preco nao pode ser maior que R$ 999.999,99' });
+  if (precoNum > 999999.99)
+    return res.status(400).json({ message: 'O preço não pode ser maior que R$ 999.999,99' });
+
+  req.body.nome = nome;
+  req.body.quantidade = quantidadeNum;
+  req.body.preco = precoNum;
 
   next();
 };
@@ -38,26 +48,42 @@ const validarAtualizacaoProduto = (req, res, next) => {
     return res.status(400).json({ message: 'Informe pelo menos um campo para atualizar' });
 
   if (nome !== undefined) {
-    if (nome.trim() === '')
-      return res.status(400).json({ message: 'O nome nao pode ser vazio' });
-    if (nome.trim().length < 2)
+    const nomeTrim = nome.trim();
+
+    if (!nomeTrim)
+      return res.status(400).json({ message: 'O nome não pode ser vazio' });
+
+    if (nomeTrim.length < 2)
       return res.status(400).json({ message: 'O nome deve ter pelo menos 2 caracteres' });
-    if (nome.trim().length > 100)
-      return res.status(400).json({ message: 'O nome deve ter no maximo 100 caracteres' });
+
+    if (nomeTrim.length > 100)
+      return res.status(400).json({ message: 'O nome deve ter no máximo 100 caracteres' });
+
+    req.body.nome = nomeTrim;
   }
 
   if (quantidade !== undefined) {
-    if (typeof quantidade !== 'number' || quantidade < 0)
-      return res.status(400).json({ message: 'A quantidade deve ser um numero positivo' });
-    if (!Number.isInteger(quantidade))
-      return res.status(400).json({ message: 'A quantidade deve ser um numero inteiro' });
+    const quantidadeNum = Number(quantidade);
+
+    if (Number.isNaN(quantidadeNum) || quantidadeNum < 0)
+      return res.status(400).json({ message: 'A quantidade deve ser um número positivo' });
+
+    if (!Number.isInteger(quantidadeNum))
+      return res.status(400).json({ message: 'A quantidade deve ser um número inteiro' });
+
+    req.body.quantidade = quantidadeNum;
   }
 
   if (preco !== undefined) {
-    if (typeof preco !== 'number' || preco < 0)
-      return res.status(400).json({ message: 'O preco deve ser um numero positivo' });
-    if (preco > 999999.99)
-      return res.status(400).json({ message: 'O preco nao pode ser maior que R$ 999.999,99' });
+    const precoNum = Number(preco);
+
+    if (Number.isNaN(precoNum) || precoNum < 0)
+      return res.status(400).json({ message: 'O preço deve ser um número positivo' });
+
+    if (precoNum > 999999.99)
+      return res.status(400).json({ message: 'O preço não pode ser maior que R$ 999.999,99' });
+
+    req.body.preco = precoNum;
   }
 
   next();

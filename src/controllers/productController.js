@@ -1,23 +1,25 @@
-const { supabase } = require('../config/supabase');
+const { supabase, supabaseAdmin } = require('../config/supabase');
 
 const criarProduto = async (req, res) => {
   try {
-    const { nome, quantidade, preco } = req.body;
+    const { nome, quantidade, preco, foto_url } = req.body;
     const user_id = req.user.id;
 
-    const { data: result, error } = await supabase
+    const { data: result, error } = await supabaseAdmin
       .from('products')
-      .insert([{ nome, quantidade, preco, user_id }])
+      .insert([{ nome, quantidade, preco, user_id, foto_url: foto_url || null }])
       .select()
       .single();
 
-    if (error)
-      return res.status(400).json({ message: 'Erro ao cadastrar produto' });
+    if (error) {
+      console.error('Erro ao inserir:', error);
+      return res.status(400).json({ message: error.message || 'Erro ao cadastrar produto', error });
+    }
 
     return res.status(201).json({ message: 'Produto cadastrado com sucesso', data: result });
   } catch (err) {
-    console.error(err);
-    return res.status(500).json({ message: 'Erro interno ao cadastrar produto' });
+    console.error('Erro geral:', err);
+    return res.status(500).json({ message: 'Erro interno ao cadastrar produto', error: err.message });
   }
 };
 
@@ -25,7 +27,7 @@ const listaProdutosUsuarios = async (req, res) => {
   try {
     const user_id = req.user.id;
 
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAdmin
       .from('products')
       .select('*')
       .eq('user_id', user_id);
@@ -50,7 +52,7 @@ const deleteProduto = async (req, res) => {
     const { id } = req.params;
     const user_id = req.user.id;
 
-    const { data: deleted, error } = await supabase
+    const { data: deleted, error } = await supabaseAdmin
       .from('products')
       .delete()
       .eq('id', id)
@@ -78,7 +80,7 @@ const deleteProdutoLote = async (req, res) => {
     if (!ids || !Array.isArray(ids) || ids.length === 0)
       return res.status(400).json({ message: 'Informe uma lista de IDs para excluir' });
 
-    const { data: deleted, error } = await supabase
+    const { data: deleted, error } = await supabaseAdmin
       .from('products')
       .delete()
       .in('id', ids)
@@ -102,15 +104,16 @@ const deleteProdutoLote = async (req, res) => {
 const atualizarProduto = async (req, res) => {
   try {
     const { id } = req.params;
-    const { nome, quantidade, preco } = req.body;
+    const { nome, quantidade, preco, foto_url } = req.body;
     const user_id = req.user.id;
 
     const updates = {};
     if (nome) updates.nome = nome;
     if (quantidade !== undefined) updates.quantidade = quantidade;
     if (preco !== undefined) updates.preco = preco;
+    if (foto_url !== undefined) updates.foto_url = foto_url;
 
-    const { data: result, error } = await supabase
+    const { data: result, error } = await supabaseAdmin
       .from('products')
       .update(updates)
       .eq('id', id)
